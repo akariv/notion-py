@@ -12,6 +12,10 @@ from .records import Record
 from .utils import add_signed_prefix_as_needed, extract_id, remove_signed_prefix_as_needed, slugify
 
 
+COLORS = ["default", "gray", "brown", "orange", "yellow",
+          "green", "blue", "purple", "pink", "red"]
+
+
 class NotionDate(object):
 
     start = None
@@ -526,14 +530,16 @@ class CollectionRowBlock(PageBlock):
             valid_options = [p["value"].lower() for p in prop["options"]]
             if not isinstance(val, list):
                 val = [val]
+            schema_need_update = False
             for v in val:
                 if v.lower() not in valid_options:
-                    raise ValueError(
-                        "Value '{}' not acceptable for property '{}' (valid options: {})".format(
-                            v, identifier, valid_options
-                        )
-                    )
+                    schema_need_update = True
+                    prop["options"].append({"id": str(uuid1()), "value": v, "color": choice(COLORS)})
+                    valid_options.append(v.lower())  
             val = [[",".join(val)]]
+            if schema_need_update:
+              schema = self.collection.get("schema")
+              self.collection.set("schema", schema)
         if prop["type"] in ["person"]:
             userlist = []
             if not isinstance(val, list):
