@@ -12,10 +12,6 @@ from .records import Record
 from .utils import add_signed_prefix_as_needed, remove_signed_prefix_as_needed, slugify
 
 
-COLORS = ["default", "gray", "brown", "orange", "yellow",
-          "green", "blue", "purple", "pink", "red"]
-
-
 class NotionDate(object):
 
     start = None
@@ -531,9 +527,9 @@ class CollectionRowBlock(PageBlock):
             valid_options = list([p["value"].lower() for p in prop["options"]])
             if not isinstance(val, list):
                 val = [val]
-            schema_need_update = False
             for v in val:
                 if v.lower() not in valid_options:
+<<<<<<< HEAD
                     schema_need_update = True
                     prop['options'].append({"id": str(uuid1()), "value": v, "color": choice(COLORS)})
                     valid_options.append(v.lower())             
@@ -542,6 +538,14 @@ class CollectionRowBlock(PageBlock):
                 schema = self.collection.get("schema")
                 schema[prop['id']] = prop
                 self.collection.set("schema", schema)
+=======
+                    raise ValueError(
+                        "Value '{}' not acceptable for property '{}' (valid options: {})".format(
+                            v, identifier, valid_options
+                        )
+                    )
+            val = [[",".join(val)]]
+>>>>>>> parent of 24d08ad... Adding support for updating tags.
         if prop["type"] in ["person"]:
             userlist = []
             if not isinstance(val, list):
