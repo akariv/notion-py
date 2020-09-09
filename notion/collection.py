@@ -527,19 +527,22 @@ class CollectionRowBlock(PageBlock):
         if prop["type"] in ["multi_select"]:
             if not val:
                 val = []
-            valid_options = [p["value"].lower() for p in prop["options"]]
+            if prop.get("options", None) == None:
+                prop["options"] = []
+            valid_options = list([p["value"].lower() for p in prop["options"]])
             if not isinstance(val, list):
                 val = [val]
             schema_need_update = False
             for v in val:
                 if v.lower() not in valid_options:
                     schema_need_update = True
-                    prop["options"].append({"id": str(uuid1()), "value": v, "color": choice(COLORS)})
-                    valid_options.append(v.lower())  
+                    prop['options'].append({"id": str(uuid1()), "value": v, "color": choice(COLORS)})
+                    valid_options.append(v.lower())             
             val = [[",".join(val)]]
             if schema_need_update:
-              schema = self.collection.get("schema")
-              self.collection.set("schema", schema)
+                schema = self.collection.get("schema")
+                schema[prop['id']] = prop
+                self.collection.set("schema", schema)
         if prop["type"] in ["person"]:
             userlist = []
             if not isinstance(val, list):
