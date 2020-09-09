@@ -369,14 +369,12 @@ class CollectionRowBlock(PageBlock):
     def __dir__(self):
         return self._get_property_slugs() + super().__dir__()
 
-    def get_property(self, identifier):
+    def get_property(self, identifier, default=None):
 
         prop = self.collection.get_schema_property(identifier)
         if prop is None:
-            raise AttributeError(
-                "Object does not have property '{}'".format(identifier)
-            )
-
+            return default
+            
         val = self.get(["properties", prop["id"]])
 
         return self._convert_notion_to_python(val, prop)
