@@ -330,7 +330,7 @@ class RecordStore(object):
             "query": {
                 "aggregate": aggregate,
                 "filter": {
-                    'filters': filter,
+                    "filters": filter,
                     "filter_operator": filter_operator,
                 },
                 "sort": sort,
